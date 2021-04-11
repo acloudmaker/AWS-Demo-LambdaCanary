@@ -75,7 +75,7 @@ git remote set-url origin  https://git-codecommit.us-east-1.amazonaws.com/v1/rep
 ```
 npm uninstall -g aws-cdk
 npm install -g aws-cdk --force
-cd ~/environment/sam-app
+cd ~/environment/lambda-canary-app
 mkdir pipeline
 cd pipeline
 cdk init --language typescript
@@ -83,10 +83,27 @@ npm install --save @aws-cdk/aws-codedeploy @aws-cdk/aws-codebuild
 npm install --save @aws-cdk/aws-codecommit @aws-cdk/aws-codepipeline-actions
 ```
 
-16. Edit the pipeline.ts file, which is your entry point to the CDK project, and change the name of the stack to lambda-canary-app-cicd.
+16. Edit the _pipeline.ts_ file inside the _bin_ directory. It is the entry point to the CDK project, and change the name of the stack to _lambda-canary-app-cicd_ in the line saying _new PipelineStack(app,_
 
 ```
-vim bin/pipeline.ts
+cd bin
+vim pipeline.ts
 # change the name of the stack to lambda-canary-app-cicd inside the file, save and exit
 ```
 
+17. Build Pipeline as Code using CDK
+
+```
+cd ~/environment/lambda-canary-app/pipeline
+npm run build
+cdk deploy
+```
+
+18. Check on CloudFormation console and verify that a new CloudFormation stack _lambda-canary-app-cicd_ was created, but because the CDK project is empty, the only resource that was created was an AWS::CDK::Metadata. On the CloudFormation Console, review the new stack and the metadata under the Resources tab
+
+19. Create the artifact bucket on S3 by copying the Edit the pipeline-stack file with .ts extension
+
+```
+$ cd ~/environment/lambda-canary-app/lib
+$ cp pipeline-stack.ts.artifact pipeline-stack.ts
+```
