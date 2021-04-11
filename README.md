@@ -30,7 +30,7 @@ sam build
 sam deploy --guided
 ```
 
-7. Open a new broswer tab and load the API endpoint URL (looks something like _https://3dixbr6ak7.execute-api.us-east-1.amazonaws.com/Prod/hello/_) or just click on the URL from your terminal window output. You should see your message similar to _{"message":"hello world!"}_ from the Lambda function. **Congratulations!!**. You've successfully created a Lambda function using SAM, CloudFormation, API Gateway and Lamda with just few clicks. Now it is time for part 2!
+7. Open a new broswer tab and load the API endpoint URL (looks something like _https://3dixbr6ak7.execute-api.us-east-1.amazonaws.com/Prod/hello/_) or just click on the URL from your terminal window output. You should see your message similar to _{"message":"hello world!"}_ from the Lambda function. **Congratulations!!**. You've successfully created a Lambda function using SAM, CloudFormation, API Gateway and Lamda with just few clicks. Now it is time for Part 2!
 
 ### Part 2 - CI/CD Pipeline
 
@@ -39,14 +39,14 @@ sam deploy --guided
 ```
 cd ~/environment/lambda-canary-app
 aws codecommit create-repository --repository-name lambda-canary-app
-git config --global user.name "YOUR-NAME"
-git config --global user.email "YOUR-EMAIL"
+
 ```
 
-9. Append the following two lines to the file .gitignore using any editor
+9. Append the following two lines to .gitignore (file should exist already) using any editor
 
 ```
 vim .gitignore
+# Append the following two lines
 .aws-sam/
 packaged.yaml
 ```
@@ -54,10 +54,39 @@ packaged.yaml
 
 ```
 cd ~/environment/lambda-canary-app
+git config --global user.name "YOUR-NAME"
+git config --global user.email "YOUR-EMAIL"
 git init
 git add .
 git commit -m "Initial commit of lambda-canary-app repo"
 git push -u origin master
 ```
-11. In the CodeCommit console window in another tab that you opened earlier, verify the codecommit push result and the contents inside repository _lambda-canary-app_
+12. If error messages like _fatal: 'origin' does not appear to be a git repository_ or _fatal: Could not read from remote repository._ appear, reset git remote origin URL with the following command. Otherwise skip this step
+
+```
+git remote set-url origin  https://git-codecommit.us-east-1.amazonaws.com/v1/repos/lambda-canary-app
+```
+
+14. If git push went through successfully, in the CodeCommit console window tab that you had opened earlier, verify the codecommit push result and the contents inside repository _lambda-canary-app_. If all looks good, proceed to Part 3
+
+### Part 3 - CDK Installation
+15. Build pipeline using CDK, starting with the CDK installation
+
+```
+npm uninstall -g aws-cdk
+npm install -g aws-cdk --force
+cd ~/environment/sam-app
+mkdir pipeline
+cd pipeline
+cdk init --language typescript
+npm install --save @aws-cdk/aws-codedeploy @aws-cdk/aws-codebuild
+npm install --save @aws-cdk/aws-codecommit @aws-cdk/aws-codepipeline-actions
+```
+
+16. Edit the pipeline.ts file, which is your entry point to the CDK project, and change the name of the stack to lambda-canary-app-cicd.
+
+```
+vim bin/pipeline.ts
+# change the name of the stack to lambda-canary-app-cicd inside the file, save and exit
+```
 
