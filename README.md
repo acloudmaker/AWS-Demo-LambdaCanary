@@ -49,7 +49,7 @@ aws codecommit create-repository --repository-name lambda-canary-app
 
 ```
 vim .gitignore
-# Append the following two lines
+# Append the following two lines, save and exit
 .aws-sam/
 packaged.yaml
 ```
@@ -64,13 +64,14 @@ git add .
 git commit -m "Initial commit of lambda-canary-app repo"
 git push -u origin master
 ```
-11. If error messages like _fatal: 'origin' does not appear to be a git repository_ or _fatal: Could not read from remote repository._ appear, reset git remote origin URL with the following command. Otherwise skip this step
+11. If error messages like _fatal: 'origin' does not appear to be a git repository_ or _fatal: Could not read from remote repository._ appear, add git remote origin URL with the following command. Otherwise skip this step. Make sure to grab your git codecommit URL depending on your region. You can do it by copying the HTTPS link from the CodeCommit console (Navigation path: Developer Tools > CodeCommit > Repositories)
+
 
 ```
-git remote set-url origin  https://git-codecommit.us-east-1.amazonaws.com/v1/repos/lambda-canary-app
+git remote add origin https://git-codecommit.us-east-2.amazonaws.com/v1/repos/lambda-canary-app
 ```
 
-12. If git push went through successfully, in the CodeCommit console window tab that you had opened earlier, verify the codecommit push result and the contents inside repository _lambda-canary-app_. If all looks good, proceed to Part 3
+12. If git push went through successfully, in the CodeCommit console window tab that you had opened earlier, verify the codecommit push result and the contents inside repository _lambda-canary-app_. If all looks good, you've successfully completed Part 2 and ready for Part 3
 
 ### Part 3 - CDK Installation and Building the Pipeline
 13. Build pipeline using CDK, starting with the CDK installation
