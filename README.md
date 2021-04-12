@@ -216,42 +216,34 @@ git push
 
 ```
 cd ~/environment/lambda-canary-app
-cp $SRC/template.yaml.cloudwatch-alarm-config .
+cp $SRC/template.yaml.cloudwatch-alarm-config template.yaml
 sam validate
 ```
 
-33. Push the changes to CodeCommit repository
-
-```
-git add .
-git commit -m "Added CloudWatch alarm to monitor the canary"
-git push
-```
-
-34. Watch the Codepipeline console, wait for the pipeline to get to the deployment stage (ExecuteChangeSet) and when it is In Progress, navigate to the CodeDeploy console to watch the deployment progress. After a couple of minutes, click on the new deployment in progress to see the details. The deployment status should show that 10% of the traffic has been shifted to the new version (aka The Canary). CodeDeploy will hold the remaining percentage until the specified time interval has ellapsed, in this case the interval specified to be 5 minutes. Shortly after the 5 minutes, the remaining traffic should be shifted to the new version. **Congratulations!!** You've successfully tested the canary deployment.
-
-35. Monitoring the health of your canary allows CodeDeploy to make a decision to whether a rollback is needed or not. If any of the CloudWatch Alarms specified gets to ALARM status, CodeDeploy rollsback the deployment automatically. Lets intentionally break the Lambda function on purpose so that the CanaryErrorsAlarm gets triggered during deployment.
+35. Monitoring the health of canary allows CodeDeploy to make a decision to whether a rollback is needed or not. If any of the CloudWatch Alarms specified gets to ALARM status, CodeDeploy rollsback the deployment automatically. The change below intentionally breaks the Lambda function on purpose so that the CanaryErrorsAlarm gets triggered during deployment.
 
 ```
 cd ~/environment/lambda-canary-app/hello-world
-cp SRC/app.js.error app.js
+cp $SRC/app.js.error app.js
+cp $SRC/test-handler.js.error tests/unit/test-handler.js
+cd ~/environment/lambda-canary-app
 git add .
 git commit -m "Breaking the lambda function on purpose"
 git push
 ```
 
-36. Again, wait for the Pipeline to reach the deployment phase (ExecuteChangeSet). It should turn blue when it begins. While the deployment is running, generate traffic to the new Lambda function to make it fail and trigger the CloudWatch Alarm. Note that in a real production environment,  users will generate organic traffic to the canary function, so the following is necesary but used here for simulation. Run the following command to invoke the Lambda function
+36. Again, wait for the Pipeline to reach the deployment phase (ExecuteChangeSet). It should turn blue when it begins. While the deployment is running, generate traffic to the new Lambda function to make it fail and trigger the CloudWatch Alarm. Note that in a real production environment, users will generate organic traffic to the canary function, so the following is not necesary but it is used here for simulation. Run the following command to invoke the Lambda function
 
 ```
-cd ~/environment/lambda-canary-ap
-cp SRC/cli-lambda-invoke.sh .
+cd ~/environment/lambda-canary-app
+cp $SRC/cli-lambda-invoke.sh .
 sh -x cli-lambda-invoke.sh
 ```
 37. Note that, during deployment, only 10% of the traffic will be routed to the new version. So, keep on invoking the above lambda many times. 1 out of 10 invocations should trigger the new broken lambda, which is what causes a rollback. The following command invokes the function 15 times in a loop. 
 
 ```
-cd ~/environment/lambda-canary-ap
-cp SRC/cli-lambda-invoke-loop.sh .
+cd ~/environment/lambda-canary-app
+cp $SRC/cli-lambda-invoke-loop.sh .
 sh -x cli-lambda-invoke-loop.sh
 ```
 
