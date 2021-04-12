@@ -201,8 +201,13 @@ sam validate
 
 ```
 cd ~/environment/lambda-canary-app
-vim hello-world/app.js hello-world/tests/unit/test-handler.js
+# To be safe, copy good version of code
+cd ~/environment/lambda-canary-app/hello-world
+cp $SRC/app.js app.js
+cp $SRC/test-handler.js tests/unit/test-handler.js
+vim app.js tests/unit/test-handler.js
 # Change the greeting message to something like "Hello AWS Community!" in both files. Save and exit and then push the change to CodeCommit
+cd ~/environment/lambda-canary-app
 git add .
 git commit -m "Canary deployments with SAM"
 git push
