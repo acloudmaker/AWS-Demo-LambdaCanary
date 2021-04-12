@@ -105,11 +105,16 @@ cdk deploy
 
 16. Check on CloudFormation console and verify that a new CloudFormation stack _lambda-canary-app-cicd_ was created, but because the CDK project is empty, the only resource that was created was an AWS::CDK::Metadata. On the CloudFormation Console, review the new stack and the metadata under the Resources tab
 
-17. Create the artifact bucket on S3 by copying the Edit the pipeline-stack file with .ts extension
+17. Create the artifact bucket on S3 by copying the Edit the pipeline-stack file with .ts extension. But before that you have to git clone the AWS-Demo-LambdaCanary repository that contains yours truly README.md instrcutions!
 
 ```
+git clone https://github.com/acloudmaker/AWS-Demo-LambdaCanary.git
+export SRC=~/environment/AWS-Demo-LambdaCanary
+echo $SRC
+ls -al $SRC
+# Make sure SRC environment var is set and you are able to list the directory before proceeding further, you will use it a lot from here on
 cd ~/environment/lambda-canary-app/lib
-cp SRC/pipeline-stack.ts.artifact pipeline-stack.ts
+cp $SRC/pipeline-stack.ts.artifact pipeline-stack.ts
 ```
 18. Build and deploy the project like earlier
 
@@ -122,7 +127,7 @@ cdk deploy
 
 ```
 cd ~/environment/lambda-canary-app/lib
-cp SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
+cp $SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
 # No build necessary at this stage
 ```
 
