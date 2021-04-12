@@ -72,7 +72,7 @@ git remote set-url origin  https://git-codecommit.us-east-1.amazonaws.com/v1/rep
 
 12. If git push went through successfully, in the CodeCommit console window tab that you had opened earlier, verify the codecommit push result and the contents inside repository _lambda-canary-app_. If all looks good, proceed to Part 3
 
-### Part 3 - CDK Installation
+### Part 3 - CDK Installation and Building the Pipeline
 13. Build pipeline using CDK, starting with the CDK installation
 
 ```
@@ -108,7 +108,7 @@ cdk deploy
 
 ```
 $ cd ~/environment/lambda-canary-app/lib
-$ cp pipeline-stack.ts.artifact pipeline-stack.ts
+$ cp SRC/pipeline-stack.ts.artifact pipeline-stack.ts
 ```
 18. Build and deploy the project like earlier
 
@@ -121,7 +121,7 @@ cdk deploy
 
 ```
 $ cd ~/environment/lambda-canary-app/lib
-$ cp pipeline-stack.ts.source-stage pipeline-stack.ts
+$ cp SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
 # No build necessary at this stage
 ```
 
@@ -129,7 +129,7 @@ $ cp pipeline-stack.ts.source-stage pipeline-stack.ts
 
 ```
 $ cd ~/environment/lambda-canary-app/lib
-$ cp pipeline-stack.ts.build-stage pipeline-stack.ts
+$ cp SRC/pipeline-stack.ts.build-stage pipeline-stack.ts
 ```
 21. Build and deploy the project like earlier
 
@@ -145,6 +145,7 @@ cdk deploy
 ```
 cd ~/environment/lambda-canary-app
 # Make sure buildspec.yml exists in this directory
+cp SRC/buildspec.yml .
 git add .
 git commit -m "Added buildspec.yml"
 git push
@@ -156,7 +157,8 @@ git push
 
 ```
 $ cd ~/environment/lambda-canary-app/lib
-$ cp pipeline-stack.ts.deploy-stage pipeline-stack.ts
+$ cp SRC/pipeline-stack.ts.deploy-stage pipeline-stack.ts
+```
 
 26. Deploy the pipeline
 
@@ -175,3 +177,38 @@ git add .
 git commit -m "CI/CD Pipeline definition"
 git push
 ```
+
+### Part 4 - Canary Deployment
+29. Copy the canary enabled _template.yaml_ to _lambda-canary-app_ directory and validate the template. For this canary demo, Canary10Percent5Minutes strategy will be used, which means that traffic is shifted in two increments. In the first increment, only 10% of the traffic is shifted to the new Lambda version, and after 5 minutes, the remaining 90% is shifted. CodeDeploy allows other types of deployment, e.g. CanaryXPercentYMinutes, LinearXPercentEveryYMinutes and AllAtOnce. The Linear strategy means that traffic is shifted in equal increments with an equal number of time interval between each increment.
+
+```
+cd ~/environment/lambda-canary-app
+cp SRC/template.yaml.canary-config .
+sam validate
+```
+
+30. Push the changes to CodeCommit repository
+
+```
+git add .
+git commit -m "Canary deployments with SAM"
+git push
+```
+
+31. Define a CloudWatch Alarm to monitor Canary deployments and this helps to configure CodeDeploy to automatically roll back the deployment if a specified CloudWatch metric has breached the alarm threshold. Common metrics to monitor are Lambda Invocation errors or Invocation Duration (latency), for example.
+
+```
+cd ~/environment/lambda-canary-app
+cp SRC/template.yaml.cloudwatch-alarm-config .
+sam validate
+```
+
+32. Push the changes to CodeCommit repository
+
+```
+git add .
+git commit -m "Added CloudWatch alarm to monitor the canary"
+git push
+```
+
+33. Watch the Codepipeline console, wait for the pipeline to get to the deployment stage (ExecuteChangeSet) and when it is In Progress, navigate to the CodeDeploy console to watch the deployment progress. After a couple of minutes, click on the new deployment in progress to see the details. The deployment status should show that 10% of the traffic has been shifted to the new version (aka The Canary). CodeDeploy will hold the remaining percentage until the specified time interval has ellapsed, in this case the interval specified to be 5 minutes. Shortly after the 5 minutes, the remaining traffic should be shifted to the new version.
