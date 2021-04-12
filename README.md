@@ -107,3 +107,68 @@ cdk deploy
 $ cd ~/environment/lambda-canary-app/lib
 $ cp pipeline-stack.ts.artifact pipeline-stack.ts
 ```
+20. Build and deploy the project like earlier
+
+```
+npm run build
+cdk deploy
+```
+
+21. Add the source stage to pipeline. This stage is in charge of triggering the pipeline based on new code changes (i.e. git push or pull requests). AWS CodeCommit is used as the source provider here, but CodePipeline also supports S3, GitHub and Amazon ECR as source providers.
+
+```
+$ cd ~/environment/lambda-canary-app/lib
+$ cp pipeline-stack.ts.source-stage pipeline-stack.ts
+# No build necessary at this stage
+```
+
+22. Add the build stage to pipeline. The Build Stage is where the Serverless application is built and packaged by SAM. AWS CodeBuild is used as the Build provider for tthe pipeline but CodePipeline also supports other providers like Jenkins, TeamCity or CloudBees
+
+```
+$ cd ~/environment/lambda-canary-app/lib
+$ cp pipeline-stack.ts.build-stage pipeline-stack.ts
+```
+23. Build and deploy the project like earlier
+
+```
+npm run build
+cdk deploy
+```
+
+24. Navigate to the AWS CodePipeline Console and check newly created pipeline! The Build step should have failed which is expected because no commands are specified yet to run during the build, so AWS CodeBuild doesn’t know how to build the Serverless application.
+
+25. Copy the buildspec.yml file to the root (top level) of the lambda-canary-app directory
+
+```
+cd ~/environment/lambda-canary-app
+# Make sure buildspec.yml exists in this directory
+git add .
+git commit -m "Added buildspec.yml"
+git push
+```
+
+26. Navigate to CodePipeline console again, and wait for it to trigger automatically. This time the build will succeed
+
+27. Add the deploy stage to the pipelne. The Deploy Stage is where the SAM application and all its resources are created in an AWS account. The most common way to do this is by using CloudFormation ChangeSets to deploy. This means that this stage will have 2 actions: the CreateChangeSet and the ExecuteChangeSet.
+
+```
+$ cd ~/environment/lambda-canary-app/lib
+$ cp pipeline-stack.ts.deploy-stage pipeline-stack.ts
+
+28. Deploy the pipeline
+
+```
+cd ~/environment/lambda-canary-app/pipeline
+npm run build
+cdk deploy
+```
+
+29. Navigate to the pipeline on CodePipelie console and see that the Deploy stage has been added. It is grayed out because it hasn’t been triggered yet. Trigger a new run of the pipeline manually by clicking the Release Change buttton.
+
+30. Let the pipline run every stage. After it finishes and if everything looks green, commit and push the code to _lambda-canary-app_ source repository. **Congratulations!** You have successfully completed creation of a CI/CD pipeline for a Serverless application using SAM and CDK!
+
+```
+git add .
+git commit -m "CI/CD Pipeline definition"
+git push
+```
