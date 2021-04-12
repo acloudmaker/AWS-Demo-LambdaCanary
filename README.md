@@ -240,4 +240,4 @@ sh -x cli-lambda-invoke-loop.sh
 
 37. Navigate to the AWS CodeDeploy Console and go into the deployment In-Progress to view its details. After a few minutes, CodeDeploy will detect that the CanaryErrorsAlarm has triggered and it will start rolling back the deployment. The screen will show, unlike a successful canary deployment, Original traffic at 100% and Replacement traffic at 0%.
 
-38. **CONGRAULATIONS** for successful completing all the objectives of this demo!!
+38. **CONGRAULATIONS** for successfully completing all the objectives of this demo!!
