@@ -108,25 +108,27 @@ cdk deploy
 17. Create the artifact bucket on S3 by copying the Edit the pipeline-stack file with .ts extension. But before that you have to git clone the AWS-Demo-LambdaCanary repository that contains yours truly README.md instrcutions!
 
 ```
+cd ~
 git clone https://github.com/acloudmaker/AWS-Demo-LambdaCanary.git
 export SRC=~/environment/AWS-Demo-LambdaCanary
 echo $SRC
 ls -al $SRC
 # Make sure SRC environment var is set and you are able to list the directory before proceeding further, you will use it a lot from here on
-cd ~/environment/lambda-canary-app/lib
+cd ~/environment/lambda-canary-app/pipeline/lib
 cp $SRC/pipeline-stack.ts.artifact pipeline-stack.ts
 ```
 18. Build and deploy the project like earlier
 
 ```
+cd ~/environment/lambda-canary-app/pipeline
 npm run build
 cdk deploy
 ```
 
-19. Add the source stage to pipeline. This stage is in charge of triggering the pipeline based on new code changes (i.e. git push or pull requests). AWS CodeCommit is used as the source provider here, but CodePipeline also supports S3, GitHub and Amazon ECR as source providers.
+19. You should see on the S3 console a bucket named like _aws-sam-cli-managed-default-samclisourcebucket-ukygkp8eacjr_ with a _lambda-canary-app/_ folder. Next add the source stage to pipeline. This stage is in charge of triggering the pipeline based on new code changes (i.e. git push or pull requests). AWS CodeCommit is used as the source provider here, but CodePipeline also supports S3, GitHub and Amazon ECR as source providers.
 
 ```
-cd ~/environment/lambda-canary-app/lib
+cd ~/environment/lambda-canary-app/pipeline/lib
 cp $SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
 # No build necessary at this stage
 ```
@@ -134,12 +136,13 @@ cp $SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
 20. Add the build stage to pipeline. The Build Stage is where the Serverless application is built and packaged by SAM. AWS CodeBuild is used as the Build provider for tthe pipeline but CodePipeline also supports other providers like Jenkins, TeamCity or CloudBees
 
 ```
-cd ~/environment/lambda-canary-app/lib
-cp SRC/pipeline-stack.ts.build-stage pipeline-stack.ts
+cd ~/environment/lambda-canary-app/pipeline/lib
+cp $SRC/pipeline-stack.ts.build-stage pipeline-stack.ts
 ```
 21. Build and deploy the project like earlier
 
 ```
+cd ~/environment/lambda-canary-app/pipeline
 npm run build
 cdk deploy
 ```
@@ -151,7 +154,7 @@ cdk deploy
 ```
 cd ~/environment/lambda-canary-app
 # Make sure buildspec.yml exists in this directory
-cp SRC/buildspec.yml .
+cp $SRC/buildspec.yml .
 git add .
 git commit -m "Added buildspec.yml"
 git push
@@ -162,8 +165,8 @@ git push
 25. Add the deploy stage to the pipelne. The Deploy Stage is where the SAM application and all its resources are created in an AWS account. The most common way to do this is by using CloudFormation ChangeSets to deploy. This means that this stage will have 2 actions: the CreateChangeSet and the ExecuteChangeSet.
 
 ```
-cd ~/environment/lambda-canary-app/lib
-cp SRC/pipeline-stack.ts.deploy-stage pipeline-stack.ts
+cd ~/environment/lambda-canary-app/pipeline/lib
+cp $SRC/pipeline-stack.ts.deploy-stage pipeline-stack.ts
 ```
 
 26. Deploy the pipeline
@@ -179,6 +182,7 @@ cdk deploy
 28. Let the pipline run every stage. After it finishes and if everything looks green, commit and push the code to _lambda-canary-app_ source repository. **Congratulations!** You have successfully completed creation of a CI/CD pipeline for a Serverless application using SAM and CDK!
 
 ```
+cd ~/environment/lambda-canary-app
 git add .
 git commit -m "CI/CD Pipeline definition"
 git push
@@ -189,27 +193,34 @@ git push
 
 ```
 cd ~/environment/lambda-canary-app
-cp SRC/template.yaml.canary-config .
+cp $SRC/template.yaml.canary-config template.yaml
 sam validate
 ```
 
-30. Push the changes to CodeCommit repository
+30. Trigger a canary deployment by making some changes to Lambda function code as well as the corresponding unit testing code. Not changing the unit testing code will fail the build stage.
 
 ```
+cd ~/environment/lambda-canary-app
+vim hello-world/app.js hello-world/tests/unit/test-handler.js
+# Change the greeting message to something like "Hello AWS Community!" in both files. Save and exit and then push the change to CodeCommit
 git add .
 git commit -m "Canary deployments with SAM"
 git push
 ```
 
-31. Define a CloudWatch Alarm to monitor Canary deployments and this helps to configure CodeDeploy to automatically roll back the deployment if a specified CloudWatch metric has breached the alarm threshold. Common metrics to monitor are Lambda Invocation errors or Invocation Duration (latency), for example.
+31. Navigate to the AWS CodeDeploy console, click on the Deployments link on the left menu, then click on the Deployment ID in progress to see the details. The deployment status should show 10% of the traffic shifted to the new version Replacement (aka The Canary) and the remaining percentage pointing to Original. After 5 minutes since we specified Canary10Percent5Minutes, the remaining traffic should shifted to the Replacement
+
+### Part 5 - Canary Deployment Failure Testing
+
+32. Define a CloudWatch Alarm to monitor Canary deployments and this helps to configure CodeDeploy to automatically roll back the deployment if a specified CloudWatch metric has breached the alarm threshold. Common metrics to monitor are Lambda Invocation errors or Invocation Duration (latency), for example.
 
 ```
 cd ~/environment/lambda-canary-app
-cp SRC/template.yaml.cloudwatch-alarm-config .
+cp $SRC/template.yaml.cloudwatch-alarm-config .
 sam validate
 ```
 
-32. Push the changes to CodeCommit repository
+33. Push the changes to CodeCommit repository
 
 ```
 git add .
@@ -217,9 +228,9 @@ git commit -m "Added CloudWatch alarm to monitor the canary"
 git push
 ```
 
-33. Watch the Codepipeline console, wait for the pipeline to get to the deployment stage (ExecuteChangeSet) and when it is In Progress, navigate to the CodeDeploy console to watch the deployment progress. After a couple of minutes, click on the new deployment in progress to see the details. The deployment status should show that 10% of the traffic has been shifted to the new version (aka The Canary). CodeDeploy will hold the remaining percentage until the specified time interval has ellapsed, in this case the interval specified to be 5 minutes. Shortly after the 5 minutes, the remaining traffic should be shifted to the new version. **Congratulations!!** You've successfully tested the canary deployment.
+34. Watch the Codepipeline console, wait for the pipeline to get to the deployment stage (ExecuteChangeSet) and when it is In Progress, navigate to the CodeDeploy console to watch the deployment progress. After a couple of minutes, click on the new deployment in progress to see the details. The deployment status should show that 10% of the traffic has been shifted to the new version (aka The Canary). CodeDeploy will hold the remaining percentage until the specified time interval has ellapsed, in this case the interval specified to be 5 minutes. Shortly after the 5 minutes, the remaining traffic should be shifted to the new version. **Congratulations!!** You've successfully tested the canary deployment.
 
-34. Monitoring the health of your canary allows CodeDeploy to make a decision to whether a rollback is needed or not. If any of the CloudWatch Alarms specified gets to ALARM status, CodeDeploy rollsback the deployment automatically. Lets intentionally break the Lambda function on purpose so that the CanaryErrorsAlarm gets triggered during deployment.
+35. Monitoring the health of your canary allows CodeDeploy to make a decision to whether a rollback is needed or not. If any of the CloudWatch Alarms specified gets to ALARM status, CodeDeploy rollsback the deployment automatically. Lets intentionally break the Lambda function on purpose so that the CanaryErrorsAlarm gets triggered during deployment.
 
 ```
 cd ~/environment/lambda-canary-app/hello-world
@@ -229,14 +240,14 @@ git commit -m "Breaking the lambda function on purpose"
 git push
 ```
 
-35. Again, wait for the Pipeline to reach the deployment phase (ExecuteChangeSet). It should turn blue when it begins. While the deployment is running, generate traffic to the new Lambda function to make it fail and trigger the CloudWatch Alarm. Note that in a real production environment,  users will generate organic traffic to the canary function, so the following is necesary but used here for simulation. Run the following command to invoke the Lambda function
+36. Again, wait for the Pipeline to reach the deployment phase (ExecuteChangeSet). It should turn blue when it begins. While the deployment is running, generate traffic to the new Lambda function to make it fail and trigger the CloudWatch Alarm. Note that in a real production environment,  users will generate organic traffic to the canary function, so the following is necesary but used here for simulation. Run the following command to invoke the Lambda function
 
 ```
 cd ~/environment/lambda-canary-ap
 cp SRC/cli-lambda-invoke.sh .
 sh -x cli-lambda-invoke.sh
 ```
-36. Note that, during deployment, only 10% of the traffic will be routed to the new version. So, keep on invoking the above lambda many times. 1 out of 10 invocations should trigger the new broken lambda, which is what causes a rollback. The following command invokes the function 15 times in a loop. 
+37. Note that, during deployment, only 10% of the traffic will be routed to the new version. So, keep on invoking the above lambda many times. 1 out of 10 invocations should trigger the new broken lambda, which is what causes a rollback. The following command invokes the function 15 times in a loop. 
 
 ```
 cd ~/environment/lambda-canary-ap
@@ -244,6 +255,6 @@ cp SRC/cli-lambda-invoke-loop.sh .
 sh -x cli-lambda-invoke-loop.sh
 ```
 
-37. Navigate to the AWS CodeDeploy Console and go into the deployment In-Progress to view its details. After a few minutes, CodeDeploy will detect that the CanaryErrorsAlarm has triggered and it will start rolling back the deployment. The screen will show, unlike a successful canary deployment, Original traffic at 100% and Replacement traffic at 0%.
+38. Navigate to the AWS CodeDeploy Console and go into the deployment In-Progress to view its details. After a few minutes, CodeDeploy will detect that the CanaryErrorsAlarm has triggered and it will start rolling back the deployment. The screen will show, unlike a successful canary deployment, Original traffic at 100% and Replacement traffic at 0%.
 
-38. **CONGRAULATIONS** for successfully completing all the objectives of this demo!!
+39. **CONGRAULATIONS** for successfully completing all the objectives of this demo!!
