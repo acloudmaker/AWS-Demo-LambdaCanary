@@ -13,5 +13,5 @@ export class PipelineStack extends cdk.Stack {
 
     // The code that defines the stack goes here. CodePipeline will use this bucket to pass artifacts to the downstream jobs and its also where SAM will upload the artifacts during the build process
     const artifactsBucket = new s3.Bucket(this, "ArtifactsBucket");
-  }
+ }
 }

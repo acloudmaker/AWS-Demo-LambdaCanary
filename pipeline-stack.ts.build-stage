@@ -13,7 +13,18 @@ export class PipelineStack extends cdk.Stack {
 
     // The code that defines the stack goes here. CodePipeline will use this bucket to pass artifacts to the downstream jobs and its also where SAM will upload the artifacts during the build process
     const artifactsBucket = new s3.Bucket(this, "ArtifactsBucket");
-  }
+
+  // Import existing CodeCommit lambda-canary-app repository
+  const codeRepo = codecommit.Repository.fromRepositoryName(
+    this,
+    'AppRepository', // Logical name within CloudFormation
+    'lambda-canary-app' // Repository name
+  );
+
+  // Pipeline creation starts
+  const pipeline = new codepipeline.Pipeline(this, 'Pipeline', {
+    artifactBucket: artifactsBucket
+  });
 
   // Declare source code as an artifact. This is necessary for any files that the CodePipeline needs to pass to downstream stages.
   const sourceOutput = new codepipeline.Artifact();
@@ -55,5 +66,5 @@ export class PipelineStack extends cdk.Stack {
       }),
     ],
   });
-
+ }
 }
