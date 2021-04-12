@@ -107,8 +107,8 @@ cdk deploy
 17. Create the artifact bucket on S3 by copying the Edit the pipeline-stack file with .ts extension
 
 ```
-$ cd ~/environment/lambda-canary-app/lib
-$ cp SRC/pipeline-stack.ts.artifact pipeline-stack.ts
+cd ~/environment/lambda-canary-app/lib
+cp SRC/pipeline-stack.ts.artifact pipeline-stack.ts
 ```
 18. Build and deploy the project like earlier
 
@@ -120,16 +120,16 @@ cdk deploy
 19. Add the source stage to pipeline. This stage is in charge of triggering the pipeline based on new code changes (i.e. git push or pull requests). AWS CodeCommit is used as the source provider here, but CodePipeline also supports S3, GitHub and Amazon ECR as source providers.
 
 ```
-$ cd ~/environment/lambda-canary-app/lib
-$ cp SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
+cd ~/environment/lambda-canary-app/lib
+cp SRC/pipeline-stack.ts.source-stage pipeline-stack.ts
 # No build necessary at this stage
 ```
 
 20. Add the build stage to pipeline. The Build Stage is where the Serverless application is built and packaged by SAM. AWS CodeBuild is used as the Build provider for tthe pipeline but CodePipeline also supports other providers like Jenkins, TeamCity or CloudBees
 
 ```
-$ cd ~/environment/lambda-canary-app/lib
-$ cp SRC/pipeline-stack.ts.build-stage pipeline-stack.ts
+cd ~/environment/lambda-canary-app/lib
+cp SRC/pipeline-stack.ts.build-stage pipeline-stack.ts
 ```
 21. Build and deploy the project like earlier
 
@@ -156,8 +156,8 @@ git push
 25. Add the deploy stage to the pipelne. The Deploy Stage is where the SAM application and all its resources are created in an AWS account. The most common way to do this is by using CloudFormation ChangeSets to deploy. This means that this stage will have 2 actions: the CreateChangeSet and the ExecuteChangeSet.
 
 ```
-$ cd ~/environment/lambda-canary-app/lib
-$ cp SRC/pipeline-stack.ts.deploy-stage pipeline-stack.ts
+cd ~/environment/lambda-canary-app/lib
+cp SRC/pipeline-stack.ts.deploy-stage pipeline-stack.ts
 ```
 
 26. Deploy the pipeline
