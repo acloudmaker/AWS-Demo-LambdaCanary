@@ -1,0 +1,32 @@
+// lib/pipeline-stack.ts
+
+import * as cdk from '@aws-cdk/core';
+import s3 = require('@aws-cdk/aws-s3');
+import codecommit = require('@aws-cdk/aws-codecommit');
+import codepipeline = require('@aws-cdk/aws-codepipeline');
+import codepipeline_actions = require('@aws-cdk/aws-codepipeline-actions');
+import codebuild = require('@aws-cdk/aws-codebuild');
+
+export class PipelineStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    // The code that defines your stack goes here. CodePipeline will use this bucket to pass artifacts to the downstream jobs and its also where SAM will upload the artifacts during the build process
+    const artifactsBucket = new s3.Bucket(this, "ArtifactsBucket");
+  }
+
+  // Declare source code as an artifact. This is necessary for any files that the CodePipeline needs to pass to downstream stages.
+  const sourceOutput = new codepipeline.Artifact();
+
+  // Add source stage to pipeline. This stage is in charge of triggering the pipeline based on new code changes (i.e. git push or pull requests). AWS CodeCommit is used as the source provider here, but CodePipeline also supports S3, GitHub and Amazon ECR as source providers.
+  pipeline.addStage({
+    stageName: 'Source',
+    actions: [
+      new codepipeline_actions.CodeCommitSourceAction({
+	actionName: 'CodeCommit_Source',
+	repository: codeRepo,
+	output: sourceOutput,
+      }),
+    ],
+  });
+}
