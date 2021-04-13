@@ -201,7 +201,7 @@ sam validate
 
 ```
 cd ~/environment/lambda-canary-app
-# To be safe, copy good version of code
+# To be safe, copy good versions of code
 cd ~/environment/lambda-canary-app/hello-world
 cp $SRC/app.js app.js
 cp $SRC/test-handler.js tests/unit/test-handler.js
@@ -252,6 +252,8 @@ cp $SRC/cli-lambda-invoke-loop.sh .
 sh -x cli-lambda-invoke-loop.sh
 ```
 
-38. Navigate to the AWS CodeDeploy Console and go into the deployment In-Progress to view its details. After a few minutes, CodeDeploy will detect that the CanaryErrorsAlarm has triggered and it will start rolling back the deployment. The screen will show, unlike a successful canary deployment, Original traffic at 100% and Replacement traffic at 0%.
+38. Navigate to the AWS CodeDeploy Console and go into the deployment In-Progress to view its details. After a few minutes, CodeDeploy will detect that the CanaryErrorsAlarm has triggered and it will start rolling back the deployment with an error message saying _the deployment is cancelled due to an abort request_. The screen will show, unlike a successful canary deployment, Original traffic at 100% and Replacement traffic at 0%. 
 
 39. **CONGRAULATIONS** for successfully completing all the objectives of this demo!!
+
+40. Please [Follow this workshop if you want to create a SAM application with Java](https://cicd.serverlessworkshops.io/java.html) just like the implementation here done using Node.js. Thank you for following. 
