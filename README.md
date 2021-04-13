@@ -2,7 +2,7 @@
 AWS Lab Style Step by Step Demonstration, Tested and Working!
 This has a total of 5 parts.  
 1. [Part 1 - Deploying Lambda With SAM](#part-1-deploying-lambda-with-sam)
-2. [Part 2 - CI/CD Pipeline Using CodePipeline](#part-2-ci/cd-pipeline-using-codePipeline)
+2. [Part 2 - CI/CD Pipeline Using CodePipeline](#part-2-cicd-pipeline-using-codepipeline)
 3. [Part 3 - CDK Installation and Building the Pipeline](#part-3-cdk-installation-and-building-the-pipeline)
 4. [Part 4 - Canary Deployment](#part-4-canary-deployment)
 5. [Part 5 - Canary Deployment Failure and Rollback Testing](#part-5-canary-deployment-failure-and-rollback-testing)
