@@ -113,7 +113,8 @@ git clone https://github.com/acloudmaker/AWS-Demo-LambdaCanary.git
 export SRC=~/environment/AWS-Demo-LambdaCanary
 echo $SRC
 ls -al $SRC
-# Make sure SRC environment var is set and you are able to list the directory before proceeding further, you will use it a lot from here on
+# Make sure SRC environment var is set and you are able to list the directory before proceeding further
+# You will use $SRC reference a lot from here on to copy code files
 cd ~/environment/lambda-canary-app/pipeline/lib
 cp $SRC/pipeline-stack.ts.artifact pipeline-stack.ts
 ```
