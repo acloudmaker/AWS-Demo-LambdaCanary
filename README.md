@@ -209,6 +209,9 @@ sam validate
 ```
 cd ~/environment/lambda-canary-app
 # To be safe, copy good versions of code
+export SRC=~/environment/AWS-Demo-LambdaCanary
+echo $SRC
+ls -al $SRC
 cd ~/environment/lambda-canary-app/hello-world
 cp $SRC/app.js app.js
 cp $SRC/test-handler.js tests/unit/test-handler.js
