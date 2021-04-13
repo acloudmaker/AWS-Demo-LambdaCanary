@@ -1,5 +1,5 @@
 # AWS-Demo-LambdaCanary
-AWS Lab Style Step by Step Demonstration, Tested and Working!
+AWS Lab Style Step by Step Demonstration, Tested and Working!  
 This has a total of 5 parts.  
 1. [Part 1 - Deploying Lambda With SAM](#part-1---deploying-lambda-with-sam)
 2. [Part 2 - CI/CD Pipeline Using CodePipeline](#part-2---cicd-pipeline-using-codepipeline)
@@ -8,6 +8,11 @@ This has a total of 5 parts.
 5. [Part 5 - Canary Deployment Failure and Rollback Testing](#part-5---canary-deployment-failure-and-rollback-testing)
 
 ## PARTS and STEPS
+
+**NOTES**
+1. Watch for errors when executing commands on the command line prompt, especially since there are a lot of them. Overlooking error message can result in unpredictable behavior
+2. Even though a series of commands can be combined and fired together, it is best to run one command at a time, especially when trying out for the first time
+3. I haven't provided clean up instructions yet, please do it at the end after everything is working satisfactorily 
 
 ### Part 1 - Deploying Lambda With SAM
 1. Login to AWS Console
