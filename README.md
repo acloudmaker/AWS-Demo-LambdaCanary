@@ -1,5 +1,11 @@
 # AWS-Demo-LambdaCanary
 AWS Lab Style Step by Step Demonstration, Tested and Working!
+This has a total of 5 parts.  
+1. Part 1 - Deploying Lambda With SAM
+2. Part 2 - CI/CD Pipeline Using CodePipeline
+3. Part 3 - CDK Installation and Building the Pipeline
+4. Part 4 - Canary Deployment
+5. Part 5 - Canary Deployment Failure and Rollback Testing
 
 ## PARTS and STEPS
 
@@ -35,7 +41,7 @@ sam deploy --guided
 
 7. Open a new broswer tab and load the API endpoint URL (looks something like _https://3dixbr6ak7.execute-api.us-east-1.amazonaws.com/Prod/hello/_) or just click on the URL from your terminal window output (either in _open_ mode to open in a browser tab or _open in preview_ mode to open in Cloud9 IDE). You should see your typed message in _app.js_ above, similar to _{"message":"hello world"}_ from the Lambda function. **Congratulations!!**. You've successfully created a Lambda function using SAM, CloudFormation, API Gateway and Lamda with just few clicks. Now it is time for Part 2!
 
-### Part 2 - CI/CD Pipeline
+### Part 2 - CI/CD Pipeline Using CodePipeline
 
 8. Create the CI/CD Pipeline, starting with CodeCommit
 
@@ -216,7 +222,7 @@ git push
 
 31. Navigate to the AWS CodeDeploy console, click on the Deployments link on the left menu, then click on the Deployment ID in progress to see the details. The deployment status should show 10% of the traffic shifted to the new version Replacement (aka The Canary) and the remaining percentage pointing to Original. After 5 minutes since we specified Canary10Percent5Minutes, the remaining traffic should shifted to the Replacement
 
-### Part 5 - Canary Deployment Failure Testing
+### Part 5 - Canary Deployment Failure and Rollback Testing
 
 32. Define a CloudWatch Alarm to monitor Canary deployments and this helps to configure CodeDeploy to automatically roll back the deployment if a specified CloudWatch metric has breached the alarm threshold. Common metrics to monitor are Lambda Invocation errors or Invocation Duration (latency), for example.
 
