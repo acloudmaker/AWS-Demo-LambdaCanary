@@ -1,7 +1,7 @@
 # AWS-Demo-LambdaCanary
 AWS Lab Style Step by Step Demonstration, Tested and Working!
 This has a total of 5 parts.  
-1. Part 1 - Deploying Lambda With SAM
+1. [Part 1 - Deploying Lambda With SAM](#Part-1-Deploying-Lambda-With-SAM)
 2. Part 2 - CI/CD Pipeline Using CodePipeline
 3. Part 3 - CDK Installation and Building the Pipeline
 4. Part 4 - Canary Deployment
