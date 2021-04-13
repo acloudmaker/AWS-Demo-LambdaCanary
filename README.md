@@ -3,7 +3,7 @@ AWS Lab Style Step by Step Demonstration, Tested and Working!
 
 ## PARTS and STEPS
 
-### Part 1 - Lambda Function
+### Part 1 - Deploying Lambda With SAM
 1. Login to AWS Console
 
 2. Create Cloud9 environment with any name (e.g. LambdaCanaryDemo), fill in default values and Next Step all the way until Create Environment. Wait until the environment is created, takes ~1-2 minutes
