@@ -12,7 +12,7 @@ This has a total of 5 parts.
 **NOTES**
 1. Watch for errors when executing commands on the command line prompt, especially since there are a lot of them. Overlooking error message can result in unpredictable behavior
 2. Even though a series of commands can be combined and fired together, it is best to run one command at a time, especially when trying out for the first time
-3. I haven't provided clean up instructions yet, please do it at the end after everything is working satisfactorily 
+3. I haven't provided clean up instructions yet, please do it at the end of the lab after everything is working satisfactorily 
 
 ### Part 1 - Deploying Lambda With SAM
 1. Login to AWS Console
@@ -201,7 +201,7 @@ git push
 ```
 
 ### Part 4 - Canary Deployment
-29. Copy the canary enabled _template.yaml_ to _lambda-canary-app_ directory and validate the template. For this canary demo, Canary10Percent5Minutes strategy will be used, which means that traffic is shifted in two increments. In the first increment, only 10% of the traffic is shifted to the new Lambda version, and after 5 minutes, the remaining 90% is shifted. CodeDeploy allows other types of deployment, e.g. CanaryXPercentYMinutes, LinearXPercentEveryYMinutes and AllAtOnce. The Linear strategy means that traffic is shifted in equal increments with an equal number of time interval between each increment.
+29. Copy the canary enabled _template.yaml_ to _lambda-canary-app_ directory and validate the template. For this canary demo, Canary10Percent5Minutes strategy will be used, which means that traffic is shifted in two increments. In the first increment, only 10% of the traffic is shifted to the new Lambda version, and after 5 minutes, the remaining 90% is shifted. CodeDeploy allows other types of deployment, e.g. _**CanaryXPercentYMinutes**_, _**LinearXPercentEveryYMinutes**_ and _**AllAtOnce**_. The Linear strategy means that traffic is shifted in equal increments with an equal number of time interval between each increment.
 
 ```
 cd ~/environment/lambda-canary-app
